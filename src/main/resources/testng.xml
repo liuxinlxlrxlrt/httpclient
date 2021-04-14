@@ -1,0 +1,24 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+<?xmlversion = "1.0" encoding= "UTF-8"?>
+<suite name="用户管理系统测试套件">
+    <test name="用户管理系统测试用例">
+        <classes>
+            <class name="com.httpclient.apiautoV8.testcase.DataProviderTestV8">
+                <methods>
+                    <include name="test01"/>
+                    <!--<include name="test02"/>-->
+                    <!--<include name="test03"/>-->
+                </methods>
+            </class>
+        </classes>
+        <!--<classes>-->
+            <!--<class name="com.httpclient.apiautoV6.testcase.DataProviderTestV7">-->
+                <!--<methods>-->
+                    <!--<include name="test01"/>-->
+                    <!--&lt;!&ndash;<include name="test02"/>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<include name="test03"/>&ndash;&gt;-->
+                <!--</methods>-->
+            <!--</class>-->
+        <!--</classes>-->
+    </test>
+</suite>
