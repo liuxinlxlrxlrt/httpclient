@@ -18,7 +18,7 @@ import java.util.Map;
  */
 public class ExcelUtils {
 
-    public static Map<String, Integer> caseIdMappingRowNum = new HashMap<>();
+    public static Map<String, Integer> rowIdentifierMappingRowNum = new HashMap<>();
     public static Map<String, Integer> cellNameMappingCellNum = new HashMap<>();
     public static List<WriteBackData> writeBackDatas = new ArrayList<>();
 
@@ -236,7 +236,7 @@ public class ExcelUtils {
             Workbook workbook = WorkbookFactory.create(inputStream);
             Sheet sheet = workbook.getSheet(sheetName);
             //获取caseid对应的行索引
-            int rowNum = caseIdMappingRowNum.get(caseId);
+            int rowNum = rowIdentifierMappingRowNum.get(caseId);
             //获取索引对于对应的行
             Row row = sheet.getRow(rowNum);
             //获取列对应的列索引
@@ -307,7 +307,7 @@ public class ExcelUtils {
                 String castId = firstCellOfRow.getStringCellValue();
                 //获取行索引
                 int rowNum = dataRow.getRowNum();
-                caseIdMappingRowNum.put(castId, rowNum);
+                rowIdentifierMappingRowNum.put(castId, rowNum);
             }
 
         } catch (Exception e) {
@@ -340,7 +340,7 @@ public class ExcelUtils {
                 String sheetName = writeBackData.getSheetName();
                 Sheet sheet = workbook.getSheet(sheetName);
                 String caseId = writeBackData.getCaseId();
-                int rowNum = caseIdMappingRowNum.get(caseId);
+                int rowNum = rowIdentifierMappingRowNum.get(caseId);
                 Row row = sheet.getRow(rowNum);
                 String cellName = writeBackData.getCellName();
                 int cellNum = cellNameMappingCellNum.get(cellName);

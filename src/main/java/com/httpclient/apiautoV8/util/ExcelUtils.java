@@ -18,14 +18,19 @@ import java.util.Map;
  */
 public class ExcelUtils {
 
-    public static Map<String, Integer> caseIdMappingRowNum = new HashMap<>();
+    public static String casePath="src/main/resources/case_v9.xls";
+
+    public static Map<String, Integer> rowIdentifierMappingRowNum = new HashMap<>();
     public static Map<String, Integer> cellNameMappingCellNum = new HashMap<>();
     public static List<WriteBackData> writeBackDatas = new ArrayList<>();
 
     static {
-        String filePath = "D:\\javaCode\\21_ProjectStorageFolder\\automatic\\java\\httpclient\\src\\main\\resources\\case_v7.xls";
-        String sheetName = "Sheet2";
-        loadRownumAndCellnumMapping(filePath, sheetName);
+        /**
+         * 用例表：
+         * 1、获取caseId以及对应的行索引
+         * 2、获取cellName以及它对应的列索引
+         */
+        loadRownumAndCellnumMapping(ExcelUtils.casePath, "用例");
     }
 
     /**
@@ -120,8 +125,9 @@ public class ExcelUtils {
      * @param excelPath excel的相对路径
      * @param sheetName excel表单名
      */
-    public static <T> void load(String excelPath, String sheetName, Class<T> clazz) {
+    public static <T> List<T> load(String excelPath, String sheetName, Class<T> clazz) {
 
+        List<T>  list = new ArrayList<>();
         //创建WorkBook对象
         try {
             Workbook workbook = WorkbookFactory.create(new File(excelPath));
@@ -154,7 +160,7 @@ public class ExcelUtils {
             //循环处理每一个数据行
             for (int i = 1; i <= lastRowIndex; i++) {
                 //反射获取Case对象
-                Object obj = clazz.newInstance();
+                T obj = clazz.newInstance();
                 //获取me一行
                 Row dataRow = sheet.getRow(i);
                 //如果行为null或者为空就跳过
@@ -172,25 +178,15 @@ public class ExcelUtils {
                     //获取（set标题）方法
                     Method method = clazz.getMethod(methodName, String.class);
                     //通过反射调用并执行（set标题）方法将每行的title对应的数据添加到Case对象中
+                    //调用执行方法时，无参只穿Class
                     method.invoke(obj, value);
                 }
-                //判断对象的语法
-                if (obj instanceof Case) {
-
-                    //将每个行对应的Case添加到list集合中
-                    Case cs = (Case) obj;
-                    System.out.println(cs);
-                    CaseUtil.cases.add(cs);
-                } else if (obj instanceof Rest) {
-                    Rest rest = (Rest) obj;
-                    RestUtil.rests.add(rest);
-                    System.out.println(rest);
-                }
-//
+                list.add(obj);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return list;
     }
 
     /**
@@ -223,7 +219,7 @@ public class ExcelUtils {
      * @param cellName
      * @param result
      */
-    public static void writeBackData(String filePath, String sheetName, String caseId, String cellName, String result) {
+    public static void writeBackData(String filePath, String sheetName, String rowIdentifier, String cellName, String result) {
         System.out.println("读写excel");
         InputStream inputStream = null;
         OutputStream outputStream = null;
@@ -237,7 +233,7 @@ public class ExcelUtils {
             Workbook workbook = WorkbookFactory.create(inputStream);
             Sheet sheet = workbook.getSheet(sheetName);
             //获取caseid对应的行索引
-            int rowNum = caseIdMappingRowNum.get(caseId);
+            int rowNum = rowIdentifierMappingRowNum.get(rowIdentifier);
             //获取索引对于对应的行
             Row row = sheet.getRow(rowNum);
             //获取列对应的列索引
@@ -307,10 +303,10 @@ public class ExcelUtils {
                 Cell firstCellOfRow = dataRow.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
                 firstCellOfRow.setCellType(CellType.STRING);
                 //获取caseId
-                String castId = firstCellOfRow.getStringCellValue();
+                String rowIdentifier = firstCellOfRow.getStringCellValue();
                 //获取行索引
                 int rowNum = dataRow.getRowNum();
-                caseIdMappingRowNum.put(castId, rowNum);
+                rowIdentifierMappingRowNum.put(rowIdentifier, rowNum);
             }
 
         } catch (Exception e) {
@@ -342,8 +338,8 @@ public class ExcelUtils {
             for (WriteBackData writeBackData : writeBackDatas) {
                 String sheetName = writeBackData.getSheetName();
                 Sheet sheet = workbook.getSheet(sheetName);
-                String caseId = writeBackData.getCaseId();
-                int rowNum = caseIdMappingRowNum.get(caseId);
+                String rowIdentifier = writeBackData.getRowIdentifier();
+                int rowNum = rowIdentifierMappingRowNum.get(rowIdentifier);
                 Row row = sheet.getRow(rowNum);
                 String cellName = writeBackData.getCellName();
                 int cellNum = cellNameMappingCellNum.get(cellName);
@@ -369,9 +365,9 @@ public class ExcelUtils {
 
 
 //    public static void main(String[] args) {
-//        String caasePath = "src/main/resources/case_v3.xls";
-//        String sheetName = "Sheet1";
-//        int[] rows = {2, 3, 4};
+//        String caasePath = "src/main/resources/case_v8.xls";
+//        String sheetName = "接口信息";
+//        int[] rows = {2, 3};
 //        int[] cells = {1, 4};
 //        String url = "";
 //        Object[][] datas = ExcelUtils.getDataByArray(caasePath, sheetName, rows, cells);

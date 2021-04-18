@@ -13,10 +13,10 @@ public class CaseUtil {
     public static List<Case> cases = new ArrayList<>();
 
     static {
-        String casePath = "src/main/resources/case_v7.xls";
-        String sheetName2 = "Sheet2";
         //将所有数据解析封装到cases集合对象中
-        ExcelUtils.load(casePath, sheetName2, Case.class);
+        List<Case> caseList = ExcelUtils.load(ExcelUtils.casePath, "用例", Case.class);
+        cases.addAll(caseList);
+
 
     }
 
@@ -58,4 +58,10 @@ public class CaseUtil {
         }
         return datas;
     }
+
+//    public static void main(String[] args) {
+//        for (Case aCase : cases) {
+//            System.out.println(aCase);
+//        }
+//    }
 }

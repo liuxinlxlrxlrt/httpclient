@@ -13,8 +13,8 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
+
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -22,7 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class HttpClientUtil {
-    private static final Logger logger = LoggerFactory.getLogger(com.httpclient.test.HttpClientUtil.class);
+    private static Logger logger = Logger.getLogger(HttpClientUtil.class);
 
     //保存sessionId
     public static Map<String, String> cookies = new HashMap<>();
@@ -35,7 +35,7 @@ public class HttpClientUtil {
      * @param headers
      */
     public static String doGet(String url, Map<String, String> params, Map<String, String> headers) throws UnsupportedEncodingException {
-
+        logger.info("接口请求地址：" + url);
         if (params != null) {
             //添加参数
             int mark = 1;
@@ -72,7 +72,7 @@ public class HttpClientUtil {
 
         CloseableHttpClient closeableHttpClient = HttpClients.createDefault();
         CloseableHttpResponse response = null;
-
+        String result = "";
         try {
             addCookieInRequestHeaderBeforeRequest(get);
             response = closeableHttpClient.execute(get);
@@ -81,16 +81,18 @@ public class HttpClientUtil {
 
             if (HttpStatus.SC_OK == statusLine.getStatusCode()) {
                 HttpEntity entity = response.getEntity();
-                return EntityUtils.toString(entity, StandardCharsets.UTF_8);
+                result = EntityUtils.toString(entity, StandardCharsets.UTF_8);
+                logger.info("接口响应数据：" + result);
             } else {
                 logger.error("响应失败，响应码：" + statusLine.getStatusCode());
             }
         } catch (IOException e) {
-            logger.error("executeGet error,url:{}", url, e);
+//            logger.error("executeGet error,url:{}", url, e);
+            e.printStackTrace();
         } finally {
             HttpClientUtils.closeQuietly(response);
         }
-        return null;
+        return result;
     }
 
     /**
@@ -102,7 +104,7 @@ public class HttpClientUtil {
      * @param headers
      */
     public static String doFormPost(String url, Map<String, String> params, Map<String, String> headers) {
-
+        logger.info("接口请求地址：" + url);
         CloseableHttpClient closeableHttpClient = HttpClients.createDefault();
         HttpPost post = new HttpPost(url);
 
@@ -136,25 +138,28 @@ public class HttpClientUtil {
         post.setConfig(build);
 
         CloseableHttpResponse response = null;
-
+        String result = "";
         try {
             addCookieInRequestHeaderBeforeRequest(post);
             response = closeableHttpClient.execute(post);
+
             getAndStoreCookiesFromResponseHeader(response);
             StatusLine statusLine = response.getStatusLine();
 
             if (HttpStatus.SC_OK == statusLine.getStatusCode()) {
                 HttpEntity entity = response.getEntity();
-                return EntityUtils.toString(entity, StandardCharsets.UTF_8);
+                result = EntityUtils.toString(entity, StandardCharsets.UTF_8);
+                logger.info("接口响应数据：" + result);
             } else {
                 logger.error("响应失败，响应码：" + statusLine.getStatusCode());
             }
         } catch (IOException e) {
-            logger.error("executeGet error,url:{}", url, e);
+//            logger.error("executeGet error,url:{}", url, e);
+            e.printStackTrace();
         } finally {
             HttpClientUtils.closeQuietly(response);
         }
-        return null;
+        return result;
     }
 
     /**
@@ -211,7 +216,8 @@ public class HttpClientUtil {
                 logger.error("响应失败，响应码：" + statusLine.getStatusCode());
             }
         } catch (IOException e) {
-            logger.error("executeGet error,url:{}", url, e);
+            e.printStackTrace();
+//            logger.error("executeGet error,url:{}", url, e);
         } finally {
             HttpClientUtils.closeQuietly(response);
         }
@@ -220,6 +226,7 @@ public class HttpClientUtil {
 
     /**
      * 发送post请求不添加cookie
+     *
      * @param url
      * @param params
      * @return
@@ -256,7 +263,8 @@ public class HttpClientUtil {
                 logger.error("响应失败，响应码：" + statusLine.getStatusCode());
             }
         } catch (IOException e) {
-            logger.error("executeGet error,url:{}", url, e);
+//            logger.error("executeGet error,url:{}", url, e);
+            e.printStackTrace();
         } finally {
             HttpClientUtils.closeQuietly(response);
         }
@@ -277,10 +285,8 @@ public class HttpClientUtil {
         String result = "";
         if ("post".equalsIgnoreCase(type)) {
             result = HttpClientUtil.doFormPost(url, params, headers);
-            System.out.println("post结果1为：" + result);
         } else {
             result = HttpClientUtil.doGet(url, params, headers);
-            System.out.println("get结果2为：" + result);
         }
         return result;
     }
@@ -314,12 +320,14 @@ public class HttpClientUtil {
 
     /**
      * 将Cookie添加到请求头中
+     *
      * @param post
      */
-    private static void addCookieInRequestHeaderBeforeRequest(HttpRequest request){
-        String jsessionIdCookie=cookies.get("JSESSIONID");
-        if (jsessionIdCookie!=null){
-            request.addHeader("Cookie",jsessionIdCookie);
+    private static void addCookieInRequestHeaderBeforeRequest(HttpRequest request) {
+        //判断cookies
+        String jsessionIdCookie = cookies.get("JSESSIONID");
+        if (jsessionIdCookie != null) {
+            request.addHeader("Cookie", jsessionIdCookie);
         }
     }
 

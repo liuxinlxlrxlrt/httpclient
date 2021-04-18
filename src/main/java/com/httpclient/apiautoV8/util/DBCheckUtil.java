@@ -27,15 +27,15 @@ public class DBCheckUtil {
             System.out.println("sql："+sql);
             //执行查询，获取结果
             Map<String, Object> columnLabelAndValues = JDBCUtil.query(sql);
-            Set<Map.Entry<String, Object>> entries = columnLabelAndValues.entrySet();
-            for (Map.Entry<String, Object> entry : entries) {
-                System.out.print("key:"+entry.getKey()+",value:"+entry.getValue());
-            }
+//            Set<Map.Entry<String, Object>> entries = columnLabelAndValues.entrySet();
+//            for (Map.Entry<String, Object> entry : entries) {
+//                System.out.print("key:"+entry.getKey()+",value:"+entry.getValue());
+//            }
             //将结果放到dbQueryResult对象中
             DBQueryResult dbQueryResult = new DBQueryResult();
             dbQueryResult.setNo(no);
             dbQueryResult.setColumnLabelAndValues(columnLabelAndValues);
-            System.out.println("dbQueryResult"+dbQueryResult);
+//            System.out.println("dbQueryResult"+dbQueryResult);
             //将对象添加到list集合中
             dbQueryResults.add(dbQueryResult);
 

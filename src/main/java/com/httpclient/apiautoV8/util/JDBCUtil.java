@@ -1,8 +1,5 @@
 package com.httpclient.apiautoV8.util;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.sql.*;
 import java.util.*;
 
@@ -36,25 +33,23 @@ public class JDBCUtil {
 
             //获取结果相关信息,检索此ResultSet对象的列的数量，类型和属性。
             ResultSetMetaData metaData = resultSet.getMetaData();
-            System.out.println("metaData：" + metaData);
 
             //得到查询字段的数量:返回此ResultSet对象中的列数。
             int columnCount = metaData.getColumnCount();
-            System.out.println("columnCount：" + columnCount);
 
             //5、从结果集去查询数据
             columnLabelAndValues = new HashMap<>();
-
+            //res.next()的大致意思是，记录指针向下移动一个位置，如果其指向一条有效记录，则返回真；否则返回假。
+            // 只有使记录指针不断移动，才能不断取出数据库中的数据
             while (resultSet.next()) {
                 //循环去除每个查询字段的数据
                 //java.sql.SQLException: Parameter index out of range (1 > number of parameters, which is 0).
                 for (int i = 1; i <= columnCount; i++) {
                     //获取字段名:获取指定列的建议标题，以用于打印输出和显示。
                     String columnLable = metaData.getColumnLabel(i);
-                    System.out.println("columnLable：" + columnLable);
                     //以 Java 对象形式获取当前行中某列的值。
                     String columnValue = resultSet.getObject(columnLable).toString();
-                    System.out.println("columnValue：" + columnValue);
+                    //将列名和值添加到map集合中
                     columnLabelAndValues.put(columnLable, columnValue);
                 }
             }
@@ -77,7 +72,7 @@ public class JDBCUtil {
         Properties properties = PropertiesUtil.getJdbcProp();
         String username = PropertiesUtil.getJdbcProp().getProperty("username");
         String password = PropertiesUtil.getJdbcProp().getProperty("password");
-        String url = PropertiesUtil.getJdbcProp().getProperty("url"l);
+        String url = PropertiesUtil.getJdbcProp().getProperty("url");
         String driver = PropertiesUtil.getJdbcProp().getProperty("driver");
         try {
 

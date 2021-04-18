@@ -1,6 +1,5 @@
 package com.httpclient.apiautoV8.testcase;
 
-import ch.qos.logback.core.db.dialect.DBUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.httpclient.apiautoV8.pojo.WriteBackData;
 import com.httpclient.apiautoV8.util.*;
@@ -14,7 +13,7 @@ import java.util.Map;
 /**
  * 接口测试统一处理类
  */
-public class BaseProcessor {
+public class BaseProcessorV7 {
     String casePath = "D:\\javaCode\\21_ProjectStorageFolder\\automatic\\java\\httpclient\\src\\main\\resources\\case_v7.xls";
     String sheetName1 = "Sheet1";
     String sheetName2 = "Sheet2";

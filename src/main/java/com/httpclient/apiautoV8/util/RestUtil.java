@@ -9,10 +9,9 @@ public class RestUtil {
     public static List<Rest>  rests =new ArrayList<>();
 
     static {
-        String casePath = "src/main/resources/case_v7.xls";
-        String sheetName1 = "Sheet1";
         //将所有数据解析封装到cases集合对象中
-        ExcelUtils.load(casePath, sheetName1, Rest.class);
+        List<Rest> restList = ExcelUtils.load(ExcelUtils.casePath, "接口信息", Rest.class);
+        rests.addAll(restList);
     }
 
     /**
@@ -45,9 +44,9 @@ public class RestUtil {
         return "";
     }
 
-//    public static void main(String[] args) {
-//        for (Rest rest : rests) {
-//            System.out.println(rest);
-//        }
-//    }
+    public static void main(String[] args) {
+        for (Rest rest : rests) {
+            System.out.println(rest);
+        }
+    }
 }
